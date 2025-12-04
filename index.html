@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沖繩旅遊 App 風格指南</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 載入 Lucide Icons (用於圖示) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* 自定義 Tailwind 配置 */
+        :root {
+            --color-teal: 20, 184, 166; /* Tailwind teal-500 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb; /* gray-50 */
+        }
+        /* 確保底部導航欄不會遮擋內容 */
+        .mobile-padding {
+            padding-bottom: 5rem; /* 大約底部導航欄的高度 */
+        }
+        @media (min-width: 768px) {
+            .mobile-padding {
+                padding-bottom: 0;
+            }
+        }
+        .scroll-hidden::-webkit-scrollbar {
+            display: none;
+        }
+        .scroll-hidden {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+    </style>
+</head>
+<body class="mobile-padding">
+
+    <!-- 頂部導航欄 (Top Nav) -->
+    <nav id="top-nav" class="fixed top-0 left-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm py-3 md:py-5">
+        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="text-xl md:text-2xl font-bold text-teal-600 flex items-center gap-2 cursor-pointer">
+                <span class="bg-teal-100 p-1.5 rounded-lg">
+                    <i data-lucide="sun" class="w-5 h-5 text-teal-600"></i>
+                </span>
+                <span>OKINAWA<span class="text-teal-400 hidden sm:inline">GO</span></span>
+            </div>
+
+            <!-- 桌機版選單 (Desktop Menu) -->
+            <div class="hidden md:flex space-x-8 items-center font-medium text-gray-600">
+                <a href="#" class="hover:text-teal-600 transition-colors" onclick="setActiveTab('home')">首頁</a>
+                <a href="#" class="hover:text-teal-600 transition-colors" onclick="setActiveTab('spots')">景點</a>
+                <a href="#" class="hover:text-teal-600 transition-colors" onclick="setActiveTab('food')">美食</a>
+                <a href="#" class="hover:text-teal-600 transition-colors" onclick="setActiveTab('plan')">行程</a>
+                <button class="bg-teal-500 text-white px-6 py-2 rounded-full hover:bg-teal-600 transition-transform active:scale-95 shadow-lg shadow-teal-200">
+                    預訂行程
+                </button>
+            </div>
+            
+            <!-- 手機版搜尋按鈕 (在右側) -->
+            <button class="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-full">
+                <i data-lucide="search" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 主內容區域 -->
+    <main class="pt-16 md:pt-24">
+        
+        <!-- 1. 首頁 (Home Tab) -->
+        <section id="tab-home" class="p-4 md:p-10 container mx-auto" style="display: block;">
+            <!-- 標題與天氣 -->
+            <div class="mb-8 md:mb-12">
+                <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 mb-2">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-blue-500">沖繩</span> 🏝️ 旅遊指南
+                </h1>
+                <p class="text-gray-500 text-lg md:text-xl">隨時隨地，探索沖繩的魅力。</p>
+            </div>
+            
+            <!-- 天氣卡片 -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 mb-10 md:mb-16">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <i data-lucide="cloud-sun" class="w-8 h-8 text-orange-400"></i>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500">沖繩那霸 (今日)</p>
+                            <h2 class="text-3xl font-bold text-gray-900" id="weather-temp">28°C</h2>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-teal-600 font-medium" id="weather-condition">晴朗多雲</p>
+                        <p class="text-sm text-gray-500" id="weather-humidity">濕度 75%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 熱門景點區塊 (橫向捲動 - 僅手機) -->
+            <div class="md:hidden mb-10">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-800">熱門景點推薦</h3>
+                    <button class="text-teal-600 text-sm font-semibold flex items-center" onclick="setActiveTab('spots')">
+                        查看全部 <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <!-- 橫向捲動容器 -->
+                <div class="flex overflow-x-scroll space-x-4 pb-4 scroll-hidden" id="spot-carousel">
+                    <!-- 景點卡片將由 JS 填充 -->
+                </div>
+            </div>
+            
+            <!-- 必吃美食區塊 (卡片列表) -->
+            <div class="mb-10">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-800">必吃美食</h3>
+                    <button class="text-teal-600 text-sm font-semibold flex items-center" onclick="setActiveTab('food')">
+                        更多美食 <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <!-- 美食列表 (由 JS 填充) -->
+                <div class="space-y-4" id="food-list">
+                    
+                </div>
+            </div>
+            
+            <!-- 行動呼籲 (CTA) -->
+            <div class="bg-teal-500 p-6 md:p-10 rounded-2xl text-white text-center shadow-xl">
+                <h3 class="text-2xl font-bold mb-3">開始規劃你的沖繩之旅</h3>
+                <p class="text-teal-100 mb-6">我們提供最便捷的預訂與行程建議服務。</p>
+                <button class="bg-white text-teal-600 px-8 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors active:scale-95">
+                    一鍵生成行程
+                </button>
+            </div>
+
+        </section>
+
+        <!-- 2. 景點列表 (Spots Tab) -->
+        <section id="tab-spots" class="p-4 md:p-10 container mx-auto" style="display: none;">
+            <h1 class="text-2xl md:text-4xl font-bold text-gray-900 mb-6 border-b pb-2 md:border-none">
+                <i data-lucide="map-pin" class="w-6 h-6 inline-block text-teal-500 mr-2"></i> 熱門景點
+            </h1>
+            
+            <!-- 分類篩選 (橫向捲動) -->
+            <div class="flex overflow-x-scroll space-x-3 mb-6 pb-2 scroll-hidden" id="category-filter">
+                <!-- 分類按鈕將由 JS 填充 -->
+            </div>
+
+            <!-- 景點列表 -->
+            <div class="space-y-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0" id="spots-list">
+                <!-- 景點卡片將由 JS 填充 -->
+            </div>
+        </section>
+
+        <!-- 3. 美食 (Food Tab) -->
+        <section id="tab-food" class="p-4 md:p-10 container mx-auto" style="display: none;">
+            <h1 class="text-2xl md:text-4xl font-bold text-gray-900 mb-6 border-b pb-2 md:border-none">
+                <i data-lucide="utensils" class="w-6 h-6 inline-block text-teal-500 mr-2"></i> 必吃美食
+            </h1>
+            
+            <div class="space-y-4" id="all-food-list">
+                <!-- 所有美食列表將由 JS 填充 (詳細清單) -->
+            </div>
+        </section>
+        
+        <!-- 4. 行程規劃 (Plan Tab) -->
+        <section id="tab-plan" class="p-4 md:p-10 container mx-auto" style="display: none;">
+            <h1 class="text-2xl md:text-4xl font-bold text-gray-900 mb-6 border-b pb-2 md:border-none">
+                <i data-lucide="calendar" class="w-6 h-6 inline-block text-teal-500 mr-2"></i> 行程規劃
+            </h1>
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 space-y-4">
+                <p class="text-gray-600 font-semibold text-lg">目前行程：沖繩五天四夜精選</p>
+                <ul class="list-disc list-inside text-gray-500 space-y-2">
+                    <li><span class="font-medium text-gray-800">Day 1:</span> 那霸機場 -> 國際通 -> 波上宮</li>
+                    <li><span class="font-medium text-gray-800">Day 2:</span> 北部：美麗海水族館 -> 古宇利島</li>
+                    <li><span class="font-medium text-gray-800">Day 3:</span> 中部：美國村 -> 萬座毛 -> 晚餐阿古豬</li>
+                    <li><span class="font-medium text-gray-800">Day 4:</span> 瀨長島 Umikaji Terrace -> 奧武島</li>
+                    <li><span class="font-medium text-gray-800">Day 5:</span> 早餐 -> 機場免稅店 -> 返回</li>
+                </ul>
+                <button class="w-full bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition-colors active:scale-95 mt-4">
+                    編輯或分享行程
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部導航欄 (Bottom Nav) - 僅手機顯示 -->
+    <div id="bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 flex justify-around items-center px-2 py-2 shadow-[0_-4px_10px_rgba(0,0,0,0.03)]">
+        <!-- 導航按鈕將由 JS 渲染 -->
+    </div>
+
+<script>
+    // --- 資料模型 ---
+    const spotsData = [
+        { id: 1, title: "美麗海水族館", category: "北部", rating: 4.9, image: "🐠", tags: ["親子", "室內", "必去"], desc: "世界級的大型水槽，近距離觀賞鯨鯊與鬼蝠魟的震撼美景。" },
+        { id: 2, title: "美國村", category: "中部", rating: 4.7, image: "🎡", tags: ["購物", "夜景", "異國風"], desc: "充滿美式風情的購物娛樂區，日落時分的摩天輪景色絕美。" },
+        { id: 3, title: "古宇利島", category: "北部", rating: 4.8, image: "🏝️", tags: ["海灘", "兜風", "戀人"], desc: "開車就能抵達的離島，擁有清澈見底的「古宇利藍」大海。" },
+        { id: 4, title: "國際通", category: "那霸", rating: 4.5, image: "🛍️", tags: ["逛街", "伴手禮", "美食"], desc: "那霸最繁華的街道，聚集了數百家伴手禮店與餐廳。" },
+        { id: 5, title: "萬座毛", category: "中部", rating: 4.6, image: "🐘", tags: ["自然", "攝影", "絕景"], desc: "像大象鼻子的珊瑚礁懸崖，是沖繩最具代表性的自然景觀之一。" },
+        { id: 6, title: "瀨長島", category: "那霸", rating: 4.7, image: "🏖️", tags: ["日落", "美食", "休憩"], desc: "小型離島，擁有白色地中海風格建築的 Umikaji Terrace，看飛機起降的絕佳地點。" },
+    ];
+
+    const foodsData = [
+        { id: 1, title: "沖繩麵 (Soba)", price: "¥800 起", image: "🍜", shop: "岸本食堂 (本部)" },
+        { id: 2, title: "塔可飯 (Taco Rice)", price: "¥700 起", image: "🌮", shop: "King Tacos (多處)" },
+        { id: 3, title: "阿古豬火鍋", price: "¥3500 起", image: "🍲", shop: "百年古家 大家 (名護)" },
+        { id: 4, title: "海葡萄丼", price: "¥1200 起", image: "🍇", shop: "元祖海葡萄 (恩納)" },
+        { id: 5, title: "Blue Seal 冰淇淋", price: "¥450 起", image: "🍦", shop: "全島分店" },
+    ];
+    
+    const categories = ['全部', '那霸', '中部', '北部', '離島'];
+    
+    let currentActiveTab = 'home';
+    let currentSelectedCategory = '全部';
+
+    // --- 渲染函式 ---
+
+    // 渲染星級評分
+    const renderRating = (rating) => {
+        const fullStars = Math.floor(rating);
+        const emptyStars = 5 - fullStars;
+        let html = '';
+        for (let i = 0; i < fullStars; i++) {
+            html += '<i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-yellow-400"></i>';
+        }
+        for (let i = 0; i < emptyStars; i++) {
+            html += '<i data-lucide="star" class="w-4 h-4 text-gray-300"></i>';
+        }
+        return `<div class="flex items-center text-sm">${html} <span class="ml-1 text-gray-600">${rating}</span></div>`;
+    };
+
+    // 渲染景點卡片 (用於橫向捲動)
+    const renderSpotCarouselCard = (spot) => {
+        return `
+            <div class="flex-shrink-0 w-64 bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 cursor-pointer active:scale-[0.98] transition-transform">
+                <div class="h-32 bg-teal-50 flex items-center justify-center text-5xl">${spot.image}</div>
+                <div class="p-4">
+                    <h4 class="font-bold text-gray-900 mb-1">${spot.title}</h4>
+                    <p class="text-xs text-teal-600 font-medium mb-2">${spot.category}</p>
+                    ${renderRating(spot.rating)}
+                </div>
+            </div>
+        `;
+    };
+    
+    // 渲染景點列表卡片 (用於景點頁面)
+    const renderSpotListItem = (spot) => {
+        return `
+            <div class="bg-white p-5 rounded-xl shadow-lg border border-gray-100 flex gap-4 cursor-pointer hover:shadow-xl transition-all">
+                <div class="flex-shrink-0 w-16 h-16 bg-teal-50 rounded-lg flex items-center justify-center text-3xl">${spot.image}</div>
+                <div class="flex-grow">
+                    <div class="flex justify-between items-start mb-1">
+                        <h4 class="font-bold text-lg text-gray-900">${spot.title}</h4>
+                        <button class="text-red-400 hover:text-red-600 p-1"><i data-lucide="heart" class="w-5 h-5"></i></button>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-2 truncate">${spot.desc}</p>
+                    <div class="flex items-center justify-between text-sm">
+                        ${renderRating(spot.rating)}
+                        <span class="bg-blue-100 text-blue-600 text-xs px-2 py-0.5 rounded-full">${spot.category}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    // 渲染美食列表卡片 (用於美食頁面)
+    const renderFoodListItem = (food) => {
+        return `
+            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-100 flex items-center gap-4 cursor-pointer hover:shadow-lg transition-all">
+                <div class="flex-shrink-0 w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center text-2xl">${food.image}</div>
+                <div class="flex-grow">
+                    <h4 class="font-bold text-gray-900">${food.title}</h4>
+                    <p class="text-xs text-gray-500">${food.shop}</p>
+                </div>
+                <div class="flex-shrink-0 text-right">
+                    <p class="font-bold text-teal-600">${food.price}</p>
+                    <p class="text-xs text-gray-400">均價</p>
+                </div>
+            </div>
+        `;
+    };
+
+    // 渲染底部導航欄
+    const renderBottomNav = () => {
+        const tabs = [
+            { id: 'home', icon: 'home', label: '首頁' },
+            { id: 'spots', icon: 'map-pin', label: '景點' },
+            { id: 'food', icon: 'utensils', label: '美食' },
+            { id: 'plan', icon: 'calendar', label: '行程' },
+        ];
+        
+        const navContainer = document.getElementById('bottom-nav');
+        navContainer.innerHTML = tabs.map(tab => {
+            const isActive = currentActiveTab === tab.id;
+            return `
+                <button 
+                    onclick="setActiveTab('${tab.id}')"
+                    class="flex flex-col items-center gap-1 p-2 rounded-xl w-16 transition-all duration-300 ${isActive ? 'text-teal-600 scale-105' : 'text-gray-400'}"
+                >
+                    <i data-lucide="${tab.icon}" class="w-6 h-6 ${isActive ? 'fill-teal-100 stroke-2' : 'stroke-2'}"></i>
+                    <span class="text-[10px] font-medium">${tab.label}</span>
+                </button>
+            `;
+        }).join('');
+        // 重新渲染 Lucide Icons
+        lucide.createIcons();
+    };
+    
+    // 渲染分類篩選按鈕
+    const renderCategoryFilter = () => {
+        const filterContainer = document.getElementById('category-filter');
+        filterContainer.innerHTML = categories.map(cat => {
+            const isActive = currentSelectedCategory === cat;
+            return `
+                <button 
+                    onclick="filterSpots('${cat}')"
+                    class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                        isActive ? 'bg-teal-500 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }"
+                >
+                    ${cat}
+                </button>
+            `;
+        }).join('');
+    };
+
+    // 渲染所有內容
+    const renderContent = () => {
+        // 1. 首頁橫向捲動區塊
+        const carouselContainer = document.getElementById('spot-carousel');
+        if (carouselContainer) {
+            carouselContainer.innerHTML = spotsData.map(renderSpotCarouselCard).join('');
+        }
+        
+        // 2. 首頁美食清單 (簡易版)
+        const homeFoodList = document.getElementById('food-list');
+        if (homeFoodList) {
+            homeFoodList.innerHTML = foodsData.slice(0, 3).map(renderFoodListItem).join('');
+        }
+
+        // 3. 景點列表 (根據篩選)
+        const spotsListContainer = document.getElementById('spots-list');
+        if (spotsListContainer) {
+            const filteredSpots = currentSelectedCategory === '全部'
+                ? spotsData
+                : spotsData.filter(spot => spot.category === currentSelectedCategory);
+            
+            spotsListContainer.innerHTML = filteredSpots.map(renderSpotListItem).join('');
+        }
+
+        // 4. 美食列表 (完整版)
+        const allFoodListContainer = document.getElementById('all-food-list');
+        if (allFoodListContainer) {
+            allFoodListContainer.innerHTML = foodsData.map(renderFoodListItem).join('');
+        }
+        
+        // 重新渲染 Lucide Icons (因為內容是動態生成的)
+        lucide.createIcons();
+    };
+
+    // --- 邏輯函式 ---
+
+    // 設定活動頁面
+    const setActiveTab = (tabId) => {
+        currentActiveTab = tabId;
+        // 隱藏所有頁面
+        document.getElementById('tab-home').style.display = 'none';
+        document.getElementById('tab-spots').style.display = 'none';
+        document.getElementById('tab-food').style.display = 'none';
+        document.getElementById('tab-plan').style.display = 'none';
+        
+        // 顯示當前頁面
+        const activeSection = document.getElementById(`tab-${tabId}`);
+        if (activeSection) {
+            activeSection.style.display = 'block';
+        }
+        
+        renderBottomNav();
+        // 滾動到頂部 (模擬 App 換頁)
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    
+    // 篩選景點
+    window.filterSpots = (category) => {
+        currentSelectedCategory = category;
+        renderCategoryFilter();
+        renderContent();
+    }
+
+
+    // 頁面加載完成後執行初始化
+    window.onload = function() {
+        // 初始化內容渲染 (包含首頁的橫向捲動和景點/美食列表)
+        renderContent();
+        
+        // 初始化底部導航欄
+        renderBottomNav();
+        
+        // 初始化分類篩選按鈕
+        renderCategoryFilter();
+        
+        // 滾動事件：改變頂部導航欄樣式 (如果需要的話，這裡可以加更複雜的邏輯，但目前 Tailwind class 已經處理了)
+        // const topNav = document.getElementById('top-nav');
+        // window.addEventListener('scroll', () => {
+        //     if (window.scrollY > 50) {
+        //         topNav.classList.add('shadow-lg');
+        //     } else {
+        //         topNav.classList.remove('shadow-lg');
+        //     }
+        // });
+        
+        // 由於 Lucide Icons 依賴 DOM 元素存在，確保在所有內容渲染後執行
+        lucide.createIcons();
+    };
+</script>
+
+</body>
+</html>
