@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沖繩四日行程規劃</title>
+    <!-- 載入 Tailwind CSS CDN，用於快速實現響應式設計 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 沖繩主題色：海洋藍 */
+        :root {
+            --okinawa-blue: #0077b6; 
+            --coral-pink: #f08080;
+            --sky-blue: #b3e5fc; /* 輕盈天空藍 */
+            --sand-color: #fff9e6; /* 輕微沙灘色 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            /* 背景維持沖繩風格的藍色到米色漸變 */
+            background: linear-gradient(135deg, var(--sky-blue) 0%, var(--sand-color) 100%);
+            background-attachment: fixed; /* 讓背景固定 */
+            padding: 20px;
+        }
+        .itinerary-card {
+            position: relative;
+            min-height: 250px; 
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
+        }
+        /* 內部內容區塊，確保文字可讀性 */
+        .content-overlay {
+            /* 調整透明度至 0.6，讓底層圖片更清晰 */
+            background-color: rgba(255, 255, 255, 0.6); 
+            backdrop-filter: blur(2px); 
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--okinawa-blue);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-xl p-6 md:p-10 space-y-8">
+        
+        <header class="text-center pb-4 border-b-2 border-okinawa-blue">
+            <h1 class="text-4xl font-extrabold text-gray-800">🏝️ 沖繩四日遊：行程規劃 (4天3夜)</h1>
+            <p class="text-lg text-gray-500 mt-2">點擊上方的標籤切換內容，每個分頁都有不同的沖繩美景哦！</p>
+        </header>
+
+        <!-- 分頁導航列 (調整為4天行程) -->
+        <nav class="flex justify-center flex-wrap gap-2 border-b pb-4">
+            <button id="tab-day1" onclick="openTab('day1')" class="tab-button px-4 py-2 text-sm font-semibold rounded-lg transition duration-150 border border-transparent">
+                Day 1
+            </button>
+            <button id="tab-day2" onclick="openTab('day2')" class="tab-button px-4 py-2 text-sm font-semibold rounded-lg transition duration-150 border border-transparent">
+                Day 2
+            </button>
+            <button id="tab-day3" onclick="openTab('day3')" class="tab-button px-4 py-2 text-sm font-semibold rounded-lg transition duration-150 border border-transparent">
+                Day 3
+            </button>
+            <button id="tab-day4" onclick="openTab('day4')" class="tab-button px-4 py-2 text-sm font-semibold rounded-lg transition duration-150 border border-transparent">
+                Day 4 (返程)
+            </button>
+            <!-- 額外的資訊分頁 -->
+            <button id="tab-notes" onclick="openTab('notes')" class="tab-button px-4 py-2 text-sm font-semibold rounded-lg transition duration-150 border border-transparent">
+                注意事項
+            </button>
+            <button id="tab-must_buy" onclick="openTab('must_buy')" class="tab-button px-4 py-2 text-sm font-semibold rounded-lg transition duration-150 border border-transparent">
+                必買物品
+            </button>
+            <button id="tab-must_eat" onclick="openTab('must_eat')" class="tab-button px-4 py-2 text-sm font-semibold rounded-lg transition duration-150 border border-transparent">
+                必吃食物
+            </button>
+        </nav>
+
+        <!-- 行程內容區塊 (分頁內容) -->
+        <section class="pt-4">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">內容詳情</h2>
+
+            <!-- Day 1 Content: Naha Night (國際通夜景) -->
+            <div id="day1" class="tab-content itinerary-card p-4 rounded-xl shadow-lg" 
+                 style="background: url('https://placehold.co/1200x800/2c3e50/ffffff?text=沖繩國際通夜景')">
+                
+                <div class="content-overlay p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold text-okinawa-blue mb-2">📅 Day 1: 抵達那霸與國際通夜景</h3>
+                    <ul class="list-disc list-inside text-gray-700 ml-4 space-y-1">
+                        <li>那霸機場 (OKA) 抵達與租車</li>
+                        <li>飯店 Check-in (那霸市區)</li>
+                        <li>國際通購物與散步 (Kokusai Street)</li>
+                        <li>晚餐：琉球新麵 通堂</li>
+                    </ul>
+                    <div class="mt-4 text-sm">
+                        <a href="https://maps.app.goo.gl/w62R2f8E9gHwYgG76" target="_blank" class="text-blue-600 hover:underline font-medium">
+                            [🗺️ 國際通導航]
+                        </a>
+                    </div>
+                    <!-- 天氣查詢按鈕 -->
+                    <button onclick="fetchWeather('Naha')" class="mt-2 text-sm text-green-700 hover:text-green-900 font-medium">
+                        [🌦️ 查詢那霸天氣]
+                    </button>
+                    <div id="weather-Naha" class="mt-1 text-sm italic text-gray-600"></div>
+
+                    <!-- Gemini Feature: Itinerary Expansion -->
+                    <div class="mt-4 pt-4 border-t border-gray-300">
+                        <button onclick="generateItineraryExpansion(1)" class="bg-coral-pink text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-red-500 transition duration-150">
+                            ✨ 獲取更多 Day 1 點子
+                        </button>
+                        <div id="gemini-day1-output" class="mt-2 text-sm text-gray-800 italic space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 2 Content: Northern Okinawa (美麗海水族館) -->
+            <div id="day2" class="tab-content itinerary-card p-4 rounded-xl shadow-lg hidden"
+                 style="background: url('https://placehold.co/1200x800/3498db/ffffff?text=美麗海水族館鯨鯊')">
+                
+                <div class="content-overlay p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold text-okinawa-blue mb-2">📅 Day 2: 北部海洋館與古宇利島</h3>
+                    <ul class="list-disc list-inside text-gray-700 ml-4 space-y-1">
+                        <li>海洋博公園：美麗海水族館 (Churaumi Aquarium)</li>
+                        <li>古宇利大橋與心形岩</li>
+                        <li>晚餐：本部町海鮮餐廳或蝦蝦飯</li>
+                    </ul>
+                    <div class="mt-4 text-sm">
+                        <a href="https://maps.app.goo.gl/w62R2f8E9gHwYgG76" target="_blank" class="text-blue-600 hover:underline font-medium">
+                            [🗺️ 美麗海水族館導航]
+                        </a>
+                    </div>
+                    <!-- 天氣查詢按鈕 -->
+                    <button onclick="fetchWeather('Motobu')" class="mt-2 text-sm text-green-700 hover:text-green-900 font-medium">
+                        [🌦️ 查詢本部天氣]
+                    </button>
+                    <div id="weather-Motobu" class="mt-1 text-sm italic text-gray-600"></div>
+                    
+                    <!-- Gemini Feature: Itinerary Expansion -->
+                    <div class="mt-4 pt-4 border-t border-gray-300">
+                        <button onclick="generateItineraryExpansion(2)" class="bg-coral-pink text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-red-500 transition duration-150">
+                            ✨ 獲取更多 Day 2 點子
+                        </button>
+                        <div id="gemini-day2-output" class="mt-2 text-sm text-gray-800 italic space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 3 Content: Central/South (美國村日落) - 結合了原 Day 3 和 Day 4 的精華 -->
+            <div id="day3" class="tab-content itinerary-card p-4 rounded-xl shadow-lg hidden"
+                 style="background: url('https://placehold.co/1200x800/e67e22/ffffff?text=美國村日落摩天輪')">
+                
+                <div class="content-overlay p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold text-okinawa-blue mb-2">📅 Day 3: 南部文化與中部時尚</h3>
+                    <ul class="list-disc list-inside text-gray-700 ml-4 space-y-1">
+                        <li>上午：沖繩世界文化王國 (Gyokusendo Cave) - 探索玉泉洞</li>
+                        <li>下午：知念岬公園 - 欣賞絕美海景</li>
+                        <li>傍晚：美國村 (American Village) - 晚餐與欣賞日落摩天輪</li>
+                    </ul>
+                    <div class="mt-4 text-sm">
+                        <a href="https://maps.app.goo.gl/95D7eE8dJk7qR2r19" target="_blank" class="text-blue-600 hover:underline font-medium">
+                            [🗺️ 美國村導航]
+                        </a>
+                    </div>
+                    <!-- 天氣查詢按鈕 (使用美國村附近坐標) -->
+                    <button onclick="fetchWeather('Chatan')" class="mt-2 text-sm text-green-700 hover:text-green-900 font-medium">
+                        [🌦️ 查詢北谷天氣]
+                    </button>
+                    <div id="weather-Chatan" class="mt-1 text-sm italic text-gray-600"></div>
+
+                    <!-- Gemini Feature: Itinerary Expansion -->
+                    <div class="mt-4 pt-4 border-t border-gray-300">
+                        <button onclick="generateItineraryExpansion(3)" class="bg-coral-pink text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-red-500 transition duration-150">
+                            ✨ 獲取更多 Day 3 點子
+                        </button>
+                        <div id="gemini-day3-output" class="mt-2 text-sm text-gray-800 italic space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Day 4 Content: Departure (蔚藍沙灘空拍) - 最後採買與返程 -->
+            <div id="day4" class="tab-content itinerary-card p-4 rounded-xl shadow-lg hidden"
+                 style="background: url('https://placehold.co/1200x800/2ecc71/ffffff?text=沖繩蔚藍沙灘空拍')">
+
+                <div class="content-overlay p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold text-okinawa-blue mb-2">📅 Day 4: 最後採買與返程</h3>
+                    <ul class="list-disc list-inside text-gray-700 ml-4 space-y-1">
+                        <li>上午：永旺夢樂城沖繩來客夢 (AEON Mall Rycom) 或 Outlet</li>
+                        <li>午餐：琉球的牛或迴轉壽司</li>
+                        <li>下午：前往那霸機場 (OKA) 辦理登機手續</li>
+                        <li>還車與返程</li>
+                    </ul>
+                    <div class="mt-4 text-sm">
+                        <a href="https://maps.app.goo.gl/6m5H2p9K8f9T9Fh5A" target="_blank" class="text-blue-600 hover:underline font-medium">
+                            [🗺️ 機場導航]
+                        </a>
+                    </div>
+                    <!-- 天氣查詢按鈕 (使用那霸附近坐標) -->
+                    <button onclick="fetchWeather('Naha-Final')" class="mt-2 text-sm text-green-700 hover:text-green-900 font-medium">
+                        [🌦️ 查詢那霸天氣]
+                    </button>
+                    <div id="weather-Naha-Final" class="mt-1 text-sm italic text-gray-600"></div>
+
+                    <!-- Gemini Feature: Itinerary Expansion -->
+                    <div class="mt-4 pt-4 border-t border-gray-300">
+                        <button onclick="generateItineraryExpansion(4)" class="bg-coral-pink text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-red-500 transition duration-150">
+                            ✨ 獲取更多 Day 4 點子
+                        </button>
+                        <div id="gemini-day4-output" class="mt-2 text-sm text-gray-800 italic space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增：注意事項分頁 (保持不變) -->
+            <div id="notes" class="tab-content itinerary-card p-4 bg-gray-50 rounded-lg shadow-sm hidden">
+                <h3 class="text-xl font-semibold text-okinawa-blue mb-2">💡 沖繩旅遊注意事項</h3>
+                <ul class="list-disc list-inside text-gray-600 ml-4 space-y-2">
+                    <li>**交通：** 沖繩主要依賴自駕。若搭乘公共交通，需留意公車班次較少且時間較長。</li>
+                    <li>**防曬：** 無論季節，紫外線都非常強，務必準備高係數防曬乳、帽子和太陽眼鏡。</li>
+                    <li>**海邊：** 部分海灘設有開放時間和安全區域，請勿在非開放時間下水。</li>
+                    <li>**颱風：** 夏季 (7-9月) 是颱風季，行前務必關注天氣預報，颱風可能導致班機取消或景點關閉。</li>
+                    <li>**禮儀：** 日本普遍重視禮節，請保持輕聲細語，並遵守景點和餐廳的規定。</li>
+                </ul>
+            </div>
+
+            <!-- 新增：必買物品分頁 (加入 LLM 探索功能) -->
+            <div id="must_buy" class="tab-content itinerary-card p-4 bg-gray-50 rounded-lg shadow-sm hidden">
+                <h3 class="text-xl font-semibold text-okinawa-blue mb-2">🎁 必買伴手禮清單</h3>
+                <ul class="list-disc list-inside text-gray-600 ml-4 space-y-2">
+                    <li>**琉球泡盛：** 沖繩特有的蒸餾酒，酒精濃度較高，適合送給長輩。</li>
+                    <li>**黑糖：** 沖繩特產，富含礦物質，推薦購買純黑糖塊或相關製品。</li>
+                    <li>**紅芋塔 (Beni-imo Tart)：** 經典甜點，外觀紫色，口感香甜綿密。</li>
+                    <li>**海鹽 (雪鹽)：** 宮古島特產，鹽味溫和，適合料理或製作甜點。</li>
+                    <li>**風獅爺 (Shisa)：** 沖繩的守護神，通常一公一母成對擺放，可作為特色紀念品。</li>
+                </ul>
+
+                <!-- Gemini Feature: Grounded Detail (Must Buy) -->
+                <div class="mt-4 pt-4 border-t border-gray-300">
+                    <label for="must-buy-topic" class="text-sm font-medium text-gray-700 block mb-1">
+                        ✨ 對哪個伴手禮感興趣？ (例如：紅芋塔)
+                    </label>
+                    <div class="flex flex-wrap gap-2">
+                        <input type="text" id="must-buy-topic" value="風獅爺" class="p-2 border rounded-lg text-sm flex-grow min-w-[150px]" placeholder="例如：琉球泡盛">
+                        <button onclick="getGroundedDetail(document.getElementById('must-buy-topic').value, 'gemini-must_buy-output')" class="bg-okinawa-blue text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-blue-600 transition duration-150">
+                            深入了解
+                        </button>
+                    </div>
+                    <div id="gemini-must_buy-output" class="mt-2 p-3 bg-white rounded-lg border text-sm text-gray-800 space-y-2"></div>
+                </div>
+            </div>
+
+            <!-- 新增：必吃食物分頁 (加入 LLM 探索功能) -->
+            <div id="must_eat" class="tab-content itinerary-card p-4 bg-gray-50 rounded-lg shadow-sm hidden">
+                <h3 class="text-xl font-semibold text-okinawa-blue mb-2">🍜 必嚐在地美食</h3>
+                <ul class="list-disc list-inside text-gray-600 ml-4 space-y-2">
+                    <li>**沖繩麵 (Soba)：** 與日式蕎麥麵不同，麵條使用小麥粉製作，搭配豚骨湯頭和燉肉。</li>
+                    <li>**塔可飯 (Taco Rice)：** 美軍基地文化影響下的產物，米飯上鋪滿肉醬、起司、生菜等。</li>
+                    <li>**苦瓜炒蛋 (Goya Champuru)：** 沖繩代表性家常菜，將苦瓜、豆腐、午餐肉和蛋一起炒。</li>
+                    <li>**海葡萄 (Umibudo)：** 一種海藻，外觀像綠色魚子醬，口感獨特。</li>
+                    <li>**Agu豬：** 沖繩特有的黑毛豬，肉質鮮嫩，油脂甜美。</li>
+                </ul>
+
+                <!-- Gemini Feature: Grounded Detail (Must Eat) -->
+                <div class="mt-4 pt-4 border-t border-gray-300">
+                    <label for="must-eat-topic" class="text-sm font-medium text-gray-700 block mb-1">
+                        ✨ 對哪個美食感興趣？ (例如：沖繩麵)
+                    </label>
+                    <div class="flex flex-wrap gap-2">
+                        <input type="text" id="must-eat-topic" value="苦瓜炒蛋" class="p-2 border rounded-lg text-sm flex-grow min-w-[150px]" placeholder="例如：塔可飯">
+                        <button onclick="getGroundedDetail(document.getElementById('must-eat-topic').value, 'gemini-must_eat-output')" class="bg-okinawa-blue text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-blue-600 transition duration-150">
+                            深入了解
+                        </button>
+                    </div>
+                    <div id="gemini-must_eat-output" class="mt-2 p-3 bg-white rounded-lg border text-sm text-gray-800 space-y-2"></div>
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+    <!-- 腳本區域 -->
+    <script>
+        // Gemini API 密鑰
+        const apiKey = ""; 
+        
+        // 天氣查詢指示器
+        const loadingIndicator = '<span class="loading-spinner inline-block align-middle mr-2"></span> 載入中...';
+        
+        /**
+         * 處理分頁切換邏輯
+         * @param {string} tabId - 要顯示的分頁 ID (例如: 'day1')
+         */
+        function openTab(tabId) {
+            // 隱藏所有分頁內容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // 移除所有按鈕的激活樣式
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('bg-okinawa-blue', 'text-white');
+                button.classList.add('bg-gray-200', 'text-gray-700');
+            });
+
+            // 顯示目標分頁內容
+            const targetContent = document.getElementById(tabId);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+            }
+
+            // 設置目標按鈕的激活樣式
+            const targetButton = document.getElementById('tab-' + tabId);
+            if (targetButton) {
+                targetButton.classList.remove('bg-gray-200', 'text-gray-700');
+                targetButton.classList.add('bg-okinawa-blue', 'text-white');
+            }
+        }
+
+        /**
+         * 使用 Open-Meteo API 查詢天氣資訊 (無需 API Key)
+         * @param {string} city - 城市識別碼
+         */
+        async function fetchWeather(city) {
+            let weatherDivId = 'weather-' + city.replace(/-/g, '_'); // 轉換 ID 名稱
+            let lat, lon, city_name;
+            
+            // 根據不同的城市 ID 設置坐標和顯示名稱
+            switch(city) {
+                case 'Naha': 
+                case 'Naha-Final': 
+                    lat = 26.2124; lon = 127.6806; city_name = '那霸市'; 
+                    // 覆蓋 weatherDivId 以匹配 HTML ID
+                    if (city === 'Naha') weatherDivId = 'weather-Naha'; 
+                    if (city === 'Naha-Final') weatherDivId = 'weather-Naha-Final'; 
+                    break;
+                case 'Motobu': 
+                    lat = 26.6575; lon = 127.8864; city_name = '本部町 (水族館)'; 
+                    weatherDivId = 'weather-Motobu'; 
+                    break;
+                case 'Chatan': 
+                    lat = 26.3045; lon = 127.7588; city_name = '北谷町 (美國村)'; 
+                    weatherDivId = 'weather-Chatan'; 
+                    break;
+                default: 
+                    console.error('地點無效:', city);
+                    return;
+            }
+
+            const weatherDiv = document.getElementById(weatherDivId);
+            if (!weatherDiv) return; // 確保元素存在
+            
+            // 避免重複查詢
+            if (weatherDiv.innerHTML.includes('°C') || weatherDiv.innerHTML.includes('載入中')) {
+                return;
+            }
+
+            weatherDiv.innerHTML = loadingIndicator;
+            
+            // Open-Meteo API 網址：查詢每日最高溫和降雨量
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,precipitation_sum&timezone=Asia%2FTokyo`;
+
+            try {
+                // 實作 exponential backoff
+                let response;
+                let data;
+                const maxRetries = 3;
+                let delay = 1000;
+                
+                for (let i = 0; i < maxRetries; i++) {
+                    try {
+                        response = await fetch(url);
+                        if (response.ok) {
+                            data = await response.json();
+                            break;
+                        }
+                    } catch (e) {
+                        // 忽略網路錯誤，準備重試
+                    }
+                    if (i < maxRetries - 1) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2;
+                    }
+                }
+                
+                if (!data) throw new Error("API call failed after retries.");
+
+
+                const today = data.daily;
+                // 獲取今天的數據 (索引 0)
+                const maxTemp = today.temperature_2m_max[0];
+                const rain = today.precipitation_sum[0];
+
+                weatherDiv.innerHTML = `
+                    <span class="text-sm font-medium text-gray-700">
+                    ${city_name} 今日天氣：最高溫 ${maxTemp}°C，降雨量 ${rain} mm。
+                    </span>
+                `;
+            } catch (error) {
+                console.error("天氣查詢失敗:", error);
+                weatherDiv.textContent = '無法查詢天氣資訊，請檢查網路。';
+            }
+        }
+
+        // --- Gemini API 核心功能 ---
+
+        /**
+         * 核心 Gemini API 呼叫函數，處理 loading, backoff 和結果格式化
+         * @param {object} payload - API 請求的 JSON payload
+         * @param {string} targetElementId - 結果顯示的 DOM 元素 ID
+         */
+        async function callGemini(payload, targetElementId) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const targetDiv = document.getElementById(targetElementId);
+            
+            // 顯示 loading 狀態
+            targetDiv.innerHTML = loadingIndicator + ' (正在與 Gemini 溝通...)'; 
+
+            let response;
+            let result;
+            const maxRetries = 3;
+            let delay = 1000;
+
+            // 實作 exponential backoff
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        result = await response.json();
+                        break;
+                    } else {
+                        // 嘗試重試
+                        console.warn(`API attempt ${i + 1} failed with status: ${response.status}`);
+                    }
+                } catch (e) {
+                    // 嘗試重試
+                    console.error(`API attempt ${i + 1} failed with error: ${e}`);
+                }
+
+                if (i < maxRetries - 1) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                } else {
+                    targetDiv.innerHTML = '<p class="text-red-500">❌ 服務暫時不可用，請稍後再試。</p>';
+                    return;
+                }
+            }
+
+            if (!result || !result.candidates || result.candidates.length === 0) {
+                targetDiv.innerHTML = '<p class="text-red-500">❌ 獲取資訊失敗，請嘗試不同的查詢或主題。</p>';
+                return;
+            }
+
+            const candidate = result.candidates[0];
+            const text = candidate.content?.parts?.[0]?.text || '';
+            
+            // 處理 Grounding Sources (引用來源)
+            let sourcesHtml = '';
+            const groundingMetadata = candidate.groundingMetadata;
+            if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                const sources = groundingMetadata.groundingAttributions
+                    .map(attribution => ({
+                        uri: attribution.web?.uri,
+                        title: attribution.web?.title,
+                    }))
+                    .filter(source => source.uri && source.title)
+                    .slice(0, 3); // 限制顯示 3 個來源
+
+                if (sources.length > 0) {
+                    sourcesHtml = '<div class="mt-3 pt-3 border-t border-gray-200 text-xs text-gray-500">';
+                    sourcesHtml += '參考資料：<ul class="list-none p-0 ml-0 space-y-0.5">';
+                    sources.forEach((s, index) => {
+                        sourcesHtml += `<li>${index + 1}. <a href="${s.uri}" target="_blank" class="hover:underline">${s.title}</a></li>`;
+                    });
+                    sourcesHtml += '</ul></div>';
+                }
+            }
+            
+            // 簡單的 Markdown 轉 HTML 轉換 (支援粗體和條列式)
+            const formattedText = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // 粗體
+                .replace(/^- (.*)/gm, '<li>$1</li>') // 條列式清單項目
+                .replace(/^(#+)\s+(.*)/gm, (match, hashes, content) => { // 標題轉換為粗體
+                    return `<strong class="block mt-2 mb-1 text-base">${content}</strong>`;
+                });
+                
+            const finalHtml = `<div class="p-3 border border-blue-200 bg-blue-50 rounded-lg shadow-inner">
+                ${formattedText.startsWith('<li>') ? '<ul class="list-disc list-inside ml-4 space-y-1">' + formattedText + '</ul>' : formattedText}
+                ${sourcesHtml}
+            </div>`;
+
+            targetDiv.innerHTML = finalHtml;
+        }
+
+        /**
+         * 呼叫 Gemini 擴展每日行程
+         * @param {number} dayNumber - 欲擴展的行程日編號 (1-4)
+         */
+        function generateItineraryExpansion(dayNumber) {
+            const itineraryData = {
+                1: "Day 1: 那霸機場抵達、國際通購物、琉球新麵通堂晚餐。",
+                2: "Day 2: 美麗海水族館、古宇利島、本部町海鮮餐廳。",
+                3: "Day 3: 沖繩世界文化王國（玉泉洞）、知念岬公園、美國村日落與晚餐。",
+                4: "Day 4: 永旺夢樂城來客夢或Outlet購物、琉球的牛午餐、那霸機場還車返程。"
+            };
+
+            const prompt = `根據以下沖繩行程：『${itineraryData[dayNumber]}』，請提供三個額外且引人入勝的選項或活動建議，例如替代晚餐地點、附近的特色景點或獨特的購物體驗。請以繁體中文，使用條列式呈現，每個建議都包含地點名稱和簡短描述。`;
+
+            const systemInstruction = `你是一位專業且富有創意的沖繩旅遊規劃師。你的回答必須是簡潔、友善的條列式清單，無需引言或結語。`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemInstruction }] },
+            };
+
+            callGemini(payload, `gemini-day${dayNumber}-output`);
+        }
+
+        /**
+         * 呼叫 Gemini 進行 Google Search Grounding 以提供主題詳情
+         * @param {string} topic - 查詢主題 (美食或伴手禮名稱)
+         * @param {string} targetElementId - 結果顯示的 DOM 元素 ID
+         */
+        function getGroundedDetail(topic, targetElementId) {
+            if (!topic.trim()) {
+                document.getElementById(targetElementId).innerHTML = '<p class="text-red-500">請輸入一個查詢主題。</p>';
+                return;
+            }
+            
+            const prompt = `請用繁體中文，提供關於沖繩的「${topic}」的簡潔介紹，內容包括其特色、歷史或食用方式。`;
+            const systemInstruction = `你是一位沖繩文化導覽員。請簡潔扼要地回答問題，內容必須基於最新的網路資訊。`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemInstruction }] },
+                tools: [{ "google_search": {} }] // 啟用 Google Search Grounding
+            };
+
+            callGemini(payload, targetElementId);
+        }
+        
+        // 頁面載入完成後，自動打開 Day 1 分頁
+        document.addEventListener('DOMContentLoaded', () => {
+            openTab('day1');
+        });
+    </script>
+
+</body>
+</html>
